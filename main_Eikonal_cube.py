@@ -14,7 +14,9 @@ from time import time as t
 from NeuralNetworks.NNs import FCFF_3L, FCFF_2L
 
 from PointSampling.Cube import data_gen_cube
-from visualization.plots_cube import plot_2d_proj, plot_2d_proj_w, plot_level_set_cube
+from visualization.plots_cube import plot_2d_proj, plot_level_set_cube #, plot_2d_proj_w
+from visualization.cube_training import plot_2d_proj_w
+
 
 from Hamiltonians.Eikonal_LxF import Eikonal_sq_LF_multiD
 
@@ -22,7 +24,7 @@ from Training.training import train
 from error_test.cube_error import error_cube
 
 
-dim = 3
+dim = 2
 
 side_length = 6.
 
@@ -36,10 +38,10 @@ def f(X):
 def g(X):    
     return 0
 
-delta_list = [.75, .5, .3, .1, .05]
+delta_list = [.7, .5, .3, .1, .01]
 alpha_list = [2.5, 2., 1.5, 1., .5]
-N_col_list = [20, 20, 20, 20, 20]
-N_b_list = [4, 4, 4, 4, 10]
+N_col_list = [80, 80, 80, 80, 80]
+N_b_list = [20, 20, 20, 20, 20]
 rounds = len(delta_list)
 
 NN = FCFF_3L([dim,20,20])
@@ -55,7 +57,7 @@ training_params = {
     'beta': 0.,  ## parameter for the +u_i term
     
     'optimizer': optim.SGD(NN.parameters(), lr = .02, momentum = .2),
-    'num_iterations': 3000,
+    'num_iterations': 500,
     'lambda': 1. #weight parameter for the boundary loss
     }
 
@@ -77,6 +79,11 @@ for i in range(rounds):
     total_loss, PDE_loss, boundary_loss = train(NN, domain, training_params)
     t1 = t() - t0 
     
+    #plt.plot(total_loss)
+    #plt.plot(PDE_loss)
+    #plt.plot(boundary_loss)
+    #plt.show()
+    
     
     MC_points = int(1e5) # Number of grid points for comparison with the ground truth
     MSE, L_inf = error_cube(NN, side_length, MC_points)
@@ -90,13 +97,15 @@ for i in range(rounds):
 
     n_grid = 100
     plot_2d_proj(X_axis, Y_axis, NN, n_grid, side_length)
+    plot_2d_proj_w(X_axis, Y_axis, NN, n_grid, side_length, training_params, tol = 1e-2)
+
 
     
 print('Mean square error:', MSE)
 print('L-infinity error:', L_inf)
 print('Run time:', run_time_history.sum())
 
-plot_2d_proj_w(X_axis, Y_axis, NN, n_grid, side_length, training_params)
+#plot_2d_proj_w(X_axis, Y_axis, NN, n_grid, side_length, training_params)
 
 #%%
 import numpy as np

@@ -22,7 +22,7 @@ from Training.training import train
 from error_test.disc_error import error_ball
 
 
-dim = 5
+dim = 2
 
 radii = [6., 0.]
 

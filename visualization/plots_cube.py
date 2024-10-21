@@ -29,9 +29,9 @@ def plot_2d_proj(axis1, axis2, NN, n_grid, side_length, dim = None):
 
     V = NN(Grid).squeeze()
 
-    plt.pcolormesh(GridX.detach(), GridY.detach(), V.detach())
-    plt.title('Solution')
-    plt.show()
+    #plt.pcolormesh(GridX.detach(), GridY.detach(), V.detach())
+    #plt.title('Solution')
+    #plt.show()
 
     fig, ax = plt.subplots(subplot_kw={"projection": "3d"})
     ax.plot_surface(np.array(GridX), np.array(GridY), np.array(V.detach()), cmap=cm.coolwarm, linewidth=0, antialiased=False)

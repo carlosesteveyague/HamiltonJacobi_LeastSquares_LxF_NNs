@@ -27,3 +27,17 @@ def error_cube(NN, side_length, n_points):
         L_inf_error = (Y - Y_hat).abs().max()
     
     return MSE, L_inf_error
+
+
+def FD_loss(NN, test_data, training_params):
+    
+    H = training_params['numerical_scheme']
+    alpha = training_params['alpha']
+    beta = training_params['beta']
+    d = training_params['delta']
+    f = training_params['f']
+    c = training_params['c']
+    
+    W = H(NN, test_data, d, alpha, beta, c) - f(test_data)
+    
+    return W**2

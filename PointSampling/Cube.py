@@ -21,7 +21,7 @@ class data_gen_cube:
         
         X = -1 + 2*torch.rand([nPDE, self.dim])
         
-        return (self.side_length/2 - d)*X
+        return (self.side_length/2)*X
     
     
     def rand_bound_points(self, nBoundary):
@@ -37,3 +37,20 @@ class data_gen_cube:
         X[idx0[idx_sgn == 1], idx1[idx_sgn == 1]] = -self.side_length/2
                 
         return X
+
+
+def get_unif_grid(side_length, dim, N):
+    
+    x = torch.linspace(-side_length/2, side_length/2, N)
+    
+    grid_int = torch.meshgrid([x]*dim)
+    all_points = torch.concat([a.unsqueeze(-1) for a in grid_int], dim = -1).reshape([-1, dim])
+    
+    int_points = all_points[all_points.abs().max(-1)[0] < side_length/2]
+    
+    bound_points = all_points[all_points.abs().max(-1)[0] == side_length/2]
+    
+    return int_points, bound_points
+    
+    
+    
